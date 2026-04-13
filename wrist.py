@@ -55,7 +55,24 @@ while True:
         if data and label != "":
             row = data + [label]
             writer.writerow(row)
+            file.flush()
             print("Saved:", label)
+
+            import pandas as pd
+            from sklearn.ensemble import RandomForestClassifier
+            import pickle
+
+            df = pd.read_csv("dataset.csv", header=None, on_bad_lines='skip')
+
+            X = df.iloc[:, :-1]
+            y = df.iloc[:, -1]
+
+            model = RandomForestClassifier()
+            model.fit(X, y)
+
+            pickle.dump(model, open("model.pkl", "wb"))
+
+            print("Model Updated 🔥")
 
     # SPACE → Space gesture
     elif key == 32:

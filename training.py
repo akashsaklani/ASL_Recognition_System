@@ -2,19 +2,20 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 import pickle
 
-# Load dataset
-data = pd.read_csv("dataset.csv", header=None)
 
-# Split features and labels
-X = data.iloc[:, :-1]   # first 42 columns
-y = data.iloc[:, -1]    # last column (label)
+def train_and_save_model(dataset_path="dataset.csv", model_path="model.pkl"):
+    data = pd.read_csv(dataset_path, header=None, on_bad_lines='skip')
+    X = data.iloc[:, :-1]
+    y = data.iloc[:, -1]
 
-# Train model
-model = RandomForestClassifier()
-model.fit(X, y)
+    model = RandomForestClassifier()
+    model.fit(X, y)
 
-# Save model
-with open("model.pkl", "wb") as f:
-    pickle.dump(model, f)
+    with open(model_path, "wb") as f:
+        pickle.dump(model, f)
 
-print("Model trained and saved!")
+    print("Model Updated 🔥")
+
+
+if __name__ == "__main__":
+    train_and_save_model()
