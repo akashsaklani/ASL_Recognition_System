@@ -21,6 +21,10 @@ current_word = ""
 frame_count = 0
 current_prediction = ""
 threshold = 15   # jitna bada, utna slow/accurate
+no_hand_frames = 0
+reset_threshold = 10
+space_hold = 0
+space_threshold = 10
 
 while True:
     ret, frame = cap.read()
@@ -31,6 +35,7 @@ while True:
     result = hands.process(frame_rgb)
 
     if result.multi_hand_landmarks:
+        no_hand_frames = 0
         for hand_landmarks in result.multi_hand_landmarks:
 
             data = []
@@ -44,6 +49,11 @@ while True:
 
             prediction = model.predict([data])[0]
 
+            if prediction == "SPACE":
+                space_hold += 1
+            else:
+                space_hold = 0
+
             if prediction == current_prediction:
                 frame_count += 1
             else:
@@ -54,15 +64,16 @@ while True:
                 if prediction != last_prediction:
                     if prediction == "SPACE":
                         sentence += " "
-
-                        if current_word != "":
-                            engine.say(current_word)
-                            engine.runAndWait()
-                            current_word = ""
                     else:
                         sentence += prediction
                         current_word += prediction
                     last_prediction = prediction
+
+            if space_hold == space_threshold:
+                if current_word != "":
+                    engine.say(current_word)
+                    engine.runAndWait()
+                    current_word = ""
 
             cv2.putText(frame, f"{prediction}", (10, 50),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
@@ -70,6 +81,14 @@ while True:
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
             mp_draw.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+
+    else:
+        no_hand_frames += 1
+
+        if no_hand_frames > reset_threshold:
+            last_prediction = ""
+            current_prediction = ""
+            frame_count = 0
 
     cv2.imshow("Prediction", frame)
 
