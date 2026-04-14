@@ -1,3 +1,5 @@
-vienv/
-__pychache__/
-*.pyc
+venv/
+__pycache__/
+*.pkl
+*.h5
+*.pt
