@@ -71,33 +71,29 @@ while True:
                 frame_count = 0
 
             if frame_count >= threshold:
-                
+
                 if prediction == "SPACE" and not space_lock:
-
-                    words = sentence.strip().split(" ")
-                    if len(words) > 0:
-
-                        last_word = words[-1]
-
-                        if last_word != "" and last_word != prev_spoken_word:
-                            print("Speaking:", last_word)
-                            speak(last_word)
-                            prev_spoken_word = last_word
-
                     sentence += " "
-
                     space_lock = True
-                    time.sleep(0.5)  # 🔥 small delay to prevent multiple spaces
                     last_prediction = "SPACE"
 
                     frame_count = 0
                     current_prediction = ""
 
+                elif prediction == "END":   # 🔥 NEW GESTURE
+                    if sentence.strip() != "":
+                        print("Speaking:", sentence)
+                        speak(sentence)
+
+                        sentence = ""
+                        last_prediction = ""
+                        current_prediction = ""
+                        frame_count = 0
+
                 elif prediction != "SPACE" and prediction != last_prediction:
                     sentence += prediction
                     last_prediction = prediction
-
-                    space_lock = False   # 🔥 unlock
+                    space_lock = False
 
             cv2.putText(frame, f"{prediction}", (10, 50),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
