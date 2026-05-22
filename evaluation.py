@@ -28,9 +28,9 @@ OUTPUT_DIR   = "evaluation_results"   # plots yahan save honge
 
 def load_data(dataset_path: str):
     """Dataset load karo aur X, y alag karo."""
-    print(" Dataset load ho raha hai...")
+    print(" Loading dataset...")
     if not os.path.exists(dataset_path):
-        raise FileNotFoundError(f"Dataset nahi mila: {dataset_path}")
+        raise FileNotFoundError(f"Dataset not found: {dataset_path}")
 
     data = pd.read_csv(dataset_path, header=None, on_bad_lines="skip")
     X = data.iloc[:, :-1].values.astype(float)
@@ -44,9 +44,9 @@ def load_data(dataset_path: str):
 
 def load_model(model_path: str):
     """Trained model load karo."""
-    print(" Model load ho raha hai...")
+    print(" Loading model...")
     if not os.path.exists(model_path):
-        raise FileNotFoundError(f"Model nahi mila: {model_path}")
+        raise FileNotFoundError(f"Model not found: {model_path}")
 
     with open(model_path, "rb") as f:
         model = pickle.load(f)
@@ -57,7 +57,7 @@ def load_model(model_path: str):
 
 def evaluate(model, X_test, y_test, classes):
     """Accuracy, Precision aur Classification Report nikalo."""
-    print("Evaluation chal rahi hai...")
+    print("Evaluation is going on...")
     y_pred = model.predict(X_test)
 
     accuracy  = accuracy_score(y_test, y_pred)
@@ -232,13 +232,13 @@ def main():
     y_pred, accuracy, precision = evaluate(model, X_test, y_test, classes)
 
     # 6. Plots
-    print(" Plots generate ho rahe hain...")
+    print(" Plots are being generated ...")
     plot_confusion_matrix(y_test, y_pred, classes, OUTPUT_DIR)
     plot_per_class_metrics(y_test, y_pred, classes, OUTPUT_DIR)
     plot_summary_bar(accuracy, precision, OUTPUT_DIR)
 
-    print("\n Evaluation complete!")
-    print(f"  All plots save in the folde : '{OUTPUT_DIR}/' .\n")
+    print("\n Evaluation completed!")
+    print(f"  All plots save in the folder : '{OUTPUT_DIR}/' .\n")
 
 
 if __name__ == "__main__":
